@@ -39,8 +39,8 @@ namespace kn
  * • Three-way comparability allows keeping the running compensations small.
  *
  */
-template<typename T> concept assignable_from_zero_literal =
-		std::assignable_from<T, float> || std::assignable_from<T, int>;
+template<typename T>
+concept assignable_from_zero_literal = requires(T a) {a = 0;};
 
 template<typename T>
 concept has_binary_plus  = requires(T a, T b, T result) {result = a + b;};
