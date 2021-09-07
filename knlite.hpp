@@ -128,7 +128,7 @@ requires kahanizable<V>
 class value
 {
 private:
-	static const V zero = 0;
+	static constexpr V zero = 0;
 	// There are only two private members that actually live in the object:
 	V Sum = zero;           // the sum
 	V Compensation = zero;  // the running compensation
@@ -136,17 +136,17 @@ private:
 public:
 	// Constructors from nothing and from V:
 	value() = default;
-	value(V  initial_value) : Sum{initial_value} {Compensation = zero;}
-	value(V& initial_value) : Sum{initial_value} {Compensation = zero;}
+	value(const V& initial_value) : Sum{initial_value} {Compensation = zero;}
 	// Copy/move constructors and assignment operators: all defaulted.
 	~value() = default;
-
+	V debug_get_sum() {return Sum;}
+	V debug_get_com() {return Compensation;}
 private:
 	// constructor which manually sets the members: for internal use only.
 	value(V S, V C) : Sum{S}, Compensation{C} {};
 
 public:
-	//=== Conversion operators ===
+//=== Conversion operators ===
 	/**
 	 * @brief Conversion operator to the raw value type
 	 */
@@ -160,6 +160,22 @@ public:
 	{
 		V converted = V(*this);
 		return (Sum - converted) + Compensation;
+	}
+	/**
+	 * @brief Extracts the real part of a complex value
+	 */
+	inline auto real(void) const
+	requires is_complex<V>
+	{
+		return Sum.real() + Compensation.real();
+	}
+	/**
+	 * @brief Extracts the imaginary part of a complex value
+	 */
+	inline auto imag(void) const
+	requires is_complex<V>
+	{
+		return Sum.imag() + Compensation.imag();
 	}
 
 //=== Equality comparison operators ===
@@ -232,7 +248,7 @@ public:
 			 * the large sum with the naive sum.
 			 */
 			return value<V>(naive_sum,
-							Compensation + (Sum - naive_sum) + increment);
+							Compensation + ((Sum - naive_sum) + increment));
 		}
 		else
 		{
@@ -240,7 +256,7 @@ public:
 			 * the old sum, so we use the increment for the cancellation.
 			 */
 			return value<V>(naive_sum,
-							Compensation + (increment - naive_sum) + Sum);
+							Compensation + ((increment - naive_sum) + Sum));
 		}
 	}
 
@@ -254,10 +270,10 @@ public:
 		V naive_sum = Sum + increment;
 		if (Sum.abs() > increment.abs())
 			return value<V>(naive_sum,
-							Compensation + (Sum - naive_sum) + increment);
+							Compensation + ((Sum - naive_sum) + increment));
 		else
 			return value<V>(naive_sum,
-							Compensation + (increment - naive_sum) + Sum);
+							Compensation + ((increment - naive_sum) + Sum));
 	}
 
 	/**
@@ -269,9 +285,9 @@ public:
 	{
 		V naive_sum = Sum + increment;
 		if (std::abs(Sum) > std::abs(increment)) // See comments in operator+
-			Compensation = Compensation + (Sum - naive_sum) + increment;
+			Compensation = Compensation + ((Sum - naive_sum) + increment);
 		else
-			Compensation = Compensation + (increment - naive_sum) + Sum;
+			Compensation = Compensation + ((increment - naive_sum) + Sum);
 		Sum = naive_sum;
 	}
 
@@ -284,9 +300,9 @@ public:
 	{
 		V naive_sum = Sum + increment;
 		if (Sum.abs() > increment.abs()) // See comments in operator+
-			Compensation = Compensation + (Sum - naive_sum) + increment;
+			Compensation = Compensation + ((Sum - naive_sum) + increment);
 		else
-			Compensation = Compensation + (increment - naive_sum) + Sum;
+			Compensation = Compensation + ((increment - naive_sum) + Sum);
 		Sum = naive_sum;
 	}
 
@@ -362,7 +378,7 @@ public:
 	{   // plain Kahan
 		V naive_sum = Sum + increment;
 		return value<V>(naive_sum,
-						Compensation + (Sum - naive_sum) + increment);
+						Compensation + ((Sum - naive_sum) + increment));
 	}
 
 	/**
@@ -373,11 +389,12 @@ public:
 	requires (!is_real<V> && !is_complex<V>)
 	{   // plain Kahan
 		V naive_sum = Sum + increment;
-		Compensation = Compensation + (Sum - naive_sum) + increment;
+		Compensation = Compensation + ((Sum - naive_sum) + increment);
 		Sum = naive_sum;
 	}
 
-// --- Operators that are common to all cases
+// === Operators that are common to all cases
+
 	/**
 	 * @brief Adds an element of the same type
 	 */
