@@ -398,7 +398,7 @@ public:
 // --- The case of V neither real nor complex - plain Kahan algorithm
 	/**
 	 * @brief Add an element of type V (neither real nor complex)
-	 * using Kahan summation
+	 * using plain Kahan summation
 	 */
 	inline value<V> operator+ (const V& increment) const
 	requires (!is_real<V>) && (!is_complex<V>)
@@ -410,7 +410,7 @@ public:
 
 	/**
 	 * @brief Add in-place an element of type V (neither real nor complex)
-	 * using Kahan summation
+	 * using plain Kahan summation
 	 */
 	inline void operator+= (const V& increment) const
 	requires (!is_real<V> && !is_complex<V>)
@@ -426,8 +426,7 @@ public:
 	 */
 	inline value<V> operator+ (const value<V>& other) const
 	{   // re-use previously defined operators:
-		value<V> with_sum_added = operator+(other.Sum);
-		return with_sum_added + other.Compensation;
+		return operator+(other.Sum) + other.Compensation;
 	}
 
 	/**
@@ -439,36 +438,54 @@ public:
 		operator+=(other.Compensation);
 	}
 
-// ------ Operator minus is defined in terms of the above and unary minus:
+// --- Variants of operator `-`
+	/**
+	 * @brief Subtracts a raw value from the kn::value object
+	 */
 	inline value<V> operator- (const V& increment) const
 	requires has_unary_minus<V>
 	{
 		return operator+(-increment);
 	}
 
+	/**
+	 * @brief Subtracts a raw value from the kn::value object
+	 */
 	inline value<V> operator- (const V& increment) const
 	requires (!has_unary_minus<V>)
 	{
 		return operator+(zero-increment);
 	}
 
+	/**
+	 * @brief Subtracts in-place a raw value from the kn::value object
+	 */
 	inline void operator-= (const V& increment)
 	requires has_unary_minus<V>
 	{
 		operator+=(-increment);
 	}
 
+	/**
+	 * @brief Subtracts in-place a raw value from the kn::value object
+	 */
 	inline void operator-= (const V& increment)
 	requires (!has_unary_minus<V>)
 	{
 		operator+=(zero-increment);
 	}
 
+	/**
+	 * @brief Subtracts another kn::value object from the current one
+	 */
 	inline value<V> operator- (const value<V>& other) const
 	{
 		return operator+(-other);
 	}
 
+	/**
+	 * @brief Subtracts in-place another kn::value object from the current one
+	 */
 	inline void operator-= (const value<V>& other)
 	{
 		operator+=(-other);
