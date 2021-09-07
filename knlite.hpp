@@ -12,8 +12,13 @@
 #ifndef _KNLITE_HPP
 #define _KNLITE_HPP
 
+// Check if we have C++20 or later:
 #ifndef __cplusplus
-#error C++ is required to compile this file
+#error C++ is required to compile knlite
+#else
+	#if __cplusplus < 202002L
+	#error Compiling knlite requires C++20 or newer
+	#endif
 #endif
 
 // Try to set precise float behavior for MSVC:
