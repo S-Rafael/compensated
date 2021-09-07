@@ -150,7 +150,7 @@ public:
 	/**
 	 * @brief Conversion operator to the raw value type
 	 */
-	inline operator V() const {return Sum + Compensation;}
+	inline constexpr operator V() const {return Sum + Compensation;}
 
 	/**
 	 * @brief Provides an estimate of the error resulting from conversion
@@ -185,12 +185,12 @@ public:
 	 * @param other - right-hand side of comparison
 	 * @return true on equality, false on inequality
 	 */
-	inline bool operator== (const value<V>& other) const
+	inline constexpr bool operator== (const value<V>& other) const
 	{
 		return (Sum - other.Sum == other.Compensation - Compensation);
 	}
 
-	inline bool operator!= (const value<V>& other) const
+	inline constexpr bool operator!= (const value<V>& other) const
 	{
 		return !(operator==(other));
 	}
@@ -201,12 +201,12 @@ public:
 	 * @param value - right-hand side of comparison
 	 * @return true on equality, false on inequality
 	 */
-	inline bool operator== (const V& value) const
+	inline constexpr bool operator== (const V& value) const
 	{
 		return (Compensation == value - Sum) || (Sum == value - Compensation);
 	}
 
-	inline bool operator!= (const V& value) const
+	inline constexpr bool operator!= (const V& value) const
 	{
 		return !(operator==(value));
 	}
@@ -215,7 +215,7 @@ public:
 	/**
 	 * @brief Unary minus - for raw value types possessing a unary minus
 	 */
-	inline value<V> operator- (void) const
+	inline constexpr value<V> operator- (void) const
 	requires has_unary_minus<V>
 	{
 		return value<V>(-Sum, -Compensation);
@@ -224,7 +224,7 @@ public:
 	/**
 	 * @brief Unary minus - for raw value types without a unary minus
 	 */
-	inline value<V> operator- (void) const
+	inline constexpr value<V> operator- (void) const
 	requires (! has_unary_minus<V>)
 	{
 		// We use subtraction from zero since there is no unary minus for V
@@ -394,15 +394,13 @@ public:
 	}
 
 // === Operators that are common to all cases
-
 	/**
 	 * @brief Adds an element of the same type
 	 */
 	inline value<V> operator+ (const value<V>& other) const
 	{   // re-use previously defined operators:
-		value<V> result = operator+(other.Sum);
-		result += other.Compensation;
-		return result;
+		value<V> with_sum_added = operator+(other.Sum);
+		return with_sum_added + other.Compensation;
 	}
 
 	/**
