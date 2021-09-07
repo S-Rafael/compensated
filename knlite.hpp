@@ -139,12 +139,21 @@ private:
 	value(V S, V C) : Sum{S}, Compensation{C} {};
 
 public:
-//=== Conversion operators ===
+	//=== Conversion operators ===
 	/**
 	 * @brief Conversion operator to the raw value type
 	 */
 	inline operator V() const {return Sum + Compensation;}
 
+	/**
+	 * @brief Provides an estimate of the error resulting from conversion
+	 * to the raw value type
+	 */
+	inline V error(void) const
+	{
+		V converted = V(*this);
+		return (Sum - converted) + Compensation;
+	}
 //=== Equality comparison operators ===
 	/**
 	 * @brief operator== tries to determine if two objects represent the
