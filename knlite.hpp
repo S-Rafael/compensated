@@ -12,11 +12,18 @@
 #ifndef _KNLITE_HPP
 #define _KNLITE_HPP
 
-// Try to set precise float behavior and push the setting to the stack:
+#ifndef __cplusplus
+#error C++ is required to compile this file
+#endif
+
+// Try to set precise float behavior for MSVC:
+#ifdef _MSC_BUILD
 #pragma float_control(precise, on, push)
+#endif
+
 // This library does NOT work with "fast math" or "unsafe math optimisations".
 #ifdef __FAST_MATH__
-#error Error: the knlite library (knlite.hpp) doesn't work with fast math/unsafe optimizations.
+#error Error: the knlite library does not work with fast math/unsafe optimizations.
 #endif
 
 // We include only C++20 standard library headers:
@@ -154,6 +161,7 @@ public:
 		V converted = V(*this);
 		return (Sum - converted) + Compensation;
 	}
+
 //=== Equality comparison operators ===
 	/**
 	 * @brief operator== tries to determine if two objects represent the
@@ -447,7 +455,10 @@ inline value<V> operator-(V raw, value<V> kn)
 }
 
 } // namespace kn
+
+#ifdef _MSC_BUILD
 #pragma float_control(pop)
+#endif
 
 #endif // _KNLITE_HPP
 
