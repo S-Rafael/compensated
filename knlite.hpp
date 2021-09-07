@@ -47,14 +47,14 @@ namespace kn
  * In order for a raw value type to be admissible for Kahan summation,
  * it must satisfy the following properties:
  *
- * 1) It must be assignable from the literal `0`.
+ * 1) It must be assignable from the integer literal `0`.
  * 2) There must be an operator + and operator - defined for the raw type,
  *    both of which return a type convertible to the raw value type.
  *
  * Optionally, if the raw value type is "real" or "complex", then we
  * can use Neumaier's algorithm which improves on Kahan's.
  * The improved (Kahan-Neumaier) algorithm keeps the running compensation
- * small.
+ * small by cancelling values of more similar orders of magnitude.
  */
 
 /**
@@ -63,7 +63,7 @@ namespace kn
 template<typename T>
 concept kahanizable = requires(T a, T b)
 {
-	a = 0; // Assignable from zero
+	a = 0; // Assignable from integer literal `zero`
 	{a + b} -> std::convertible_to<T>; // has a binary plus
 	{a - b} -> std::convertible_to<T>; // has a binary minus
 };
@@ -100,10 +100,10 @@ concept is_real = std::three_way_comparable<T>
 				  && (has_std_abs<T> || has_custom_abs<T>);
 
 /*
- * Formulate predicates that determine whether a type behaves
- * "like a complex number", i.e., it has public member functions
- * real(), imag() returning admissible real types and has a
- * two-argument constructor which accepts these types.
+ * Formulate a predicate saying that a given type behaves
+ * "like a complex number", i.e., that it has public member
+ * functions real(), imag() returning kahanizable real types
+ * and has a 2-argument constructor which accepts these types.
  */
 template<typename T>
 concept std_real = kahanizable<T>
@@ -133,25 +133,28 @@ requires kahanizable<V>
 class value
 {
 private:
-	static constexpr V zero = 0;
+	static constexpr V zero = 0; // requires constexpr constructibility from int
 	// There are only two private members that actually live in the object:
 	V Sum = zero;           // the sum
 	V Compensation = zero;  // the running compensation
 
 public:
 	// Constructors from nothing and from V:
-	value() = default;
-	value(const V& initial_value) : Sum{initial_value} {Compensation = zero;}
-	// Copy/move constructors and assignment operators: all defaulted.
+	constexpr value() = default;
+	constexpr value(const V& initial_value) : Sum{initial_value} {Compensation = zero;}
+	/*
+	 * Copy/move constructors and assignment operators: all defaulted.
+	 * This class is default-constructible, trivially copiable and movable
+	 */
 	~value() = default;
-	V debug_get_sum() {return Sum;}
-	V debug_get_com() {return Compensation;}
+
 private:
-	// constructor which manually sets the members: for internal use only.
+	// Constructor which manually sets the members. For internal use only.
 	value(V S, V C) : Sum{S}, Compensation{C} {};
 
 public:
 //=== Conversion operators ===
+
 	/**
 	 * @brief Conversion operator to the raw value type
 	 */
@@ -166,24 +169,27 @@ public:
 		V converted = V(*this);
 		return (Sum - converted) + Compensation;
 	}
+
 	/**
 	 * @brief Extracts the real part of a complex value
 	 */
-	inline auto real(void) const
+	inline constexpr auto real(void) const
 	requires is_complex<V>
 	{
 		return Sum.real() + Compensation.real();
 	}
+
 	/**
 	 * @brief Extracts the imaginary part of a complex value
 	 */
-	inline auto imag(void) const
+	inline constexpr auto imag(void) const
 	requires is_complex<V>
 	{
 		return Sum.imag() + Compensation.imag();
 	}
 
 //=== Equality comparison operators ===
+
 	/**
 	 * @brief operator== tries to determine if two objects represent the
 	 * same value, even if represented differently
@@ -191,11 +197,19 @@ public:
 	 * @return true on equality, false on inequality
 	 */
 	inline constexpr bool operator== (const value<V>& other) const
+	requires std::equality_comparable<V>
 	{
 		return (Sum - other.Sum == other.Compensation - Compensation);
 	}
 
+	/**
+	 * @brief operator!= tries to determine if two objects represent
+	 * mathematically different values
+	 * @param other - right-hand side of comparison
+	 * @return true on inequality, false on equality
+	 */
 	inline constexpr bool operator!= (const value<V>& other) const
+	requires std::equality_comparable<V>
 	{
 		return !(operator==(other));
 	}
@@ -203,15 +217,23 @@ public:
 	/**
 	 * @brief operator== tries to compare the value represented by this
 	 * object with a raw value
-	 * @param value - right-hand side of comparison
+	 * @param value - raw value to compare with
 	 * @return true on equality, false on inequality
 	 */
 	inline constexpr bool operator== (const V& value) const
+	requires std::equality_comparable<V>
 	{
 		return (Compensation == value - Sum) || (Sum == value - Compensation);
 	}
 
+	/**
+	 * @brief operator!= tries to compare the value represented by this
+	 * object with a raw value
+	 * @param value - raw value to compare with
+	 * @return true on inequality, false on equality
+	 */
 	inline constexpr bool operator!= (const V& value) const
+	requires std::equality_comparable<V>
 	{
 		return !(operator==(value));
 	}
