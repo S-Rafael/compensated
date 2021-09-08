@@ -126,6 +126,26 @@ TEST_F(knlite_test, equality_comparison)
 	EXPECT_FALSE(huge_dbl == kx1);
 }
 
+/**
+ * @test Check if the unary minus works
+ */
+TEST_F(knlite_test, unary_minus)
+{
+	// Test unary minus with complex raw vale
+	std::complex<double> z{1.0, 2.0};
+	auto k = kn::value{z};
+	auto neg = -k;
+	auto sum = k + neg;
+	EXPECT_DOUBLE_EQ(sum.real(), 0.0);
+	EXPECT_DOUBLE_EQ(sum.imag(), 0.0);
+
+	// Test unary minus with floats
+	kn::value<float> t{huge_fl};
+	auto minus_t = -t;
+	auto fsum = minus_t + t;
+	EXPECT_EQ(fsum, 0.0);
+}
+
 int main(int argc, char** argv)
 {
 	::testing::InitGoogleTest(&argc, argv);
