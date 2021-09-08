@@ -492,7 +492,7 @@ public:
 	}
 }; // class value
 
-// ==== Left operators: V + value<V>, V - value<V> ====
+// ==== Left operators: V + value<V>, V - value<V>
 /**
  * @brief Operator `+` for adding a raw value on the left
  */
@@ -511,6 +511,26 @@ requires kahanizable<V>
 inline value<V> operator-(V raw, value<V> kn)
 {
 	return (-kn) + raw;
+}
+// ==== Left equality comparison operators: V == value<V>, V != value<V>
+/**
+ * @brief Operator `==` with raw value on the left
+ */
+template<typename V>
+requires kahanizable<V>
+inline value<V> operator==(V raw, value<V> kn)
+{
+	return (kn == raw);
+}
+
+/**
+ * @brief Operator `!=` with raw value on the left
+ */
+template<typename V>
+requires kahanizable<V>
+inline value<V> operator!=(V raw, value<V> kn)
+{
+	return (kn != raw);
 }
 
 } // namespace kn
