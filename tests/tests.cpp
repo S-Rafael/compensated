@@ -102,6 +102,30 @@ TEST_F(knlite_test, conversions)
 	EXPECT_DOUBLE_EQ(imkz, z.imag());
 }
 
+/**
+ * @test Check if the equality comparison operators work as expected
+ */
+TEST_F(knlite_test, equality_comparison)
+{
+	double x = 42.0;
+	auto kx1 = kn::value{x}; // template parameter inference
+	auto kx2 = kn::value<double>{x}; // no inference
+	auto other = kn::value<double>{huge_dbl};
+	EXPECT_TRUE(kx1 == kx2);
+	EXPECT_FALSE(kx1 != kx2);
+	EXPECT_FALSE(kx1 == other);
+	EXPECT_FALSE(kx2 == other);
+	EXPECT_TRUE(kx1 != other);
+	EXPECT_TRUE(kx2 != other);
+	EXPECT_TRUE(kx1 == x);
+	EXPECT_FALSE(kx1 != x);
+	EXPECT_TRUE(kx2 == x);
+	EXPECT_FALSE(kx2 != x);
+	EXPECT_TRUE(x == kx1);
+	EXPECT_TRUE(x == kx2);
+	EXPECT_FALSE(huge_dbl == kx1);
+}
+
 int main(int argc, char** argv)
 {
 	::testing::InitGoogleTest(&argc, argv);
