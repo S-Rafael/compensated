@@ -12,6 +12,7 @@
 */
 
 #include <complex>
+#include <iostream>
 
 #include "gtest/gtest.h"
 #include "../knlite.hpp"
@@ -23,8 +24,8 @@
 class knlite_test : public ::testing::Test
 {
 public:
-	static double huge_dbl, tiny_dbl; // Store test doubles
-	static float  huge_fl, tiny_fl;   // Store test floats
+	double huge_dbl, tiny_dbl; // Store test doubles
+	float  huge_fl, tiny_fl;   // Store test floats
 
 	/**
 	 * @brief knlite_test class constructor
@@ -63,7 +64,7 @@ public:
 /**
  * @test Check if the size of object is twice the size of raw value
  */
-TEST(knlite_test, object_size)
+TEST_F(knlite_test, object_size)
 {
 	kn::value<double> kd;
 	kn::value< std::complex<double> > kc;
@@ -71,6 +72,35 @@ TEST(knlite_test, object_size)
 	EXPECT_EQ(sizeof(kc), 2*sizeof(std::complex<double>));
 }
 
+/**
+ * @test Check if the conversions to and from raw values work as expected
+ */
+TEST_F(knlite_test, conversions)
+{
+	// Test conversion from double to kn::value and back
+	double x = 1.0;
+	kn::value<double> kx{x};
+	double dkx = (double) kx;
+	EXPECT_DOUBLE_EQ(x, dkx);
+
+	// Test conversion from kn::value to double and back,
+	// using operator==
+	kn::value<double> k{huge_dbl};
+	double dk = (double) k;
+	kn::value<double> kdk{dk};
+	EXPECT_EQ(k, kdk);
+
+	// Test conversions by extracting real and imaginary parts
+	// of a complex number
+	std::complex<double> z{1.0, 2.0};
+	kn::value< std::complex<double> > kz{z};
+	double rekz = kz.real();
+	double imkz = kz.imag();
+	std::complex<double> reconstructed{rekz, imkz};
+	EXPECT_EQ(reconstructed, z);
+	EXPECT_DOUBLE_EQ(rekz, z.real());
+	EXPECT_DOUBLE_EQ(imkz, z.imag());
+}
 
 int main(int argc, char** argv)
 {
