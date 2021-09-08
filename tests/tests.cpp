@@ -152,4 +152,4 @@ int main(int argc, char** argv)
     return RUN_ALL_TESTS();
 }
 
-// vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:enc=utf-8 :
+// vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fenc=utf-8 :

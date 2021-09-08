@@ -541,4 +541,4 @@ inline value<V> operator!=(V raw, value<V> kn)
 
 #endif // _KNLITE_HPP
 
-// vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:enc=utf-8 :
+// vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fenc=utf-8 :

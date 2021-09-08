@@ -12,7 +12,7 @@
 #include <iostream> // For console input/output
 #include <complex>  // For std::complex
 
-#include "../knlite.hpp"
+#include "knlite.hpp"
 
 /**
  *  We declare a very simple custom class to demonstrate
@@ -116,4 +116,4 @@ int main(/* We don't need command line parameters */)
 	return 0;
 }
 
-// vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:enc=utf-8 :
+// vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fenc=utf-8 :
