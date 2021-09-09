@@ -65,7 +65,7 @@ int main(/* We don't need command line parameters */)
 			 << "For example, " << expected_zero << " != 0\n" << endl;
 
 	// Now try the same with knlite
-	kn::value<double> kn_test = huge;
+	kn::value<double> kn_test{huge};
 	kn_test += tiny;
 	kn_test -= huge;
 	kn_test -= tiny;
@@ -76,7 +76,7 @@ int main(/* We don't need command line parameters */)
 // === Demonstration with complex numbers ===
 	cdbl z {huge, tiny};
 	cdbl w {tiny, huge};
-	kn::value<cdbl> kn_complex = z;
+	kn::value<cdbl> kn_complex{z};
 	kn_complex += w;
 	kn_complex -= z;
 	kn_complex -= w;
