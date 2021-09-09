@@ -133,15 +133,14 @@ requires kahanizable<V>
 class value
 {
 private:
-	static constexpr V zero = 0; // requires constexpr constructibility from int
 	// There are only two private members that actually live in the object:
-	V Sum = zero;           // the sum
-	V Compensation = zero;  // the running compensation
+	V Sum = 0;           // the sum
+	V Compensation = 0;  // the running compensation
 
 public:
 	// Constructors from nothing and from V:
 	constexpr value() = default;
-	constexpr value(const V& initial_value) : Sum{initial_value} {Compensation = zero;}
+	explicit constexpr value(const V& initial_value) : Sum{initial_value} {Compensation = 0;}
 	/*
 	 * Copy/move constructors and assignment operators: all defaulted.
 	 * This class is default-constructible, trivially copiable and movable
@@ -159,6 +158,15 @@ public:
 	 * @brief Conversion operator to the raw value type
 	 */
 	inline constexpr operator V() const {return Sum + Compensation;}
+
+	/**
+	 * @brief Assignment operator from raw value type
+	 */
+	inline void operator= (V value)
+	{
+		Sum = value;
+		Compensation = 0;
+	}
 
 	/**
 	 * @brief Provides an estimate of the error resulting from conversion
@@ -254,6 +262,7 @@ public:
 	inline constexpr value<V> operator- (void) const
 	requires (! has_unary_minus<V>)
 	{
+		V zero = 0;
 		// We use subtraction from zero since there is no unary minus for V
 		return value<V>(zero - Sum, zero - Compensation);
 	}
@@ -454,6 +463,7 @@ public:
 	inline value<V> operator- (const V& increment) const
 	requires (!has_unary_minus<V>)
 	{
+		V zero = 0;
 		return operator+(zero-increment);
 	}
 
@@ -472,6 +482,7 @@ public:
 	inline void operator-= (const V& increment)
 	requires (!has_unary_minus<V>)
 	{
+		V zero = 0;
 		operator+=(zero-increment);
 	}
 
