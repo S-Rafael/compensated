@@ -421,7 +421,7 @@ public:
 	 * @brief Add in-place an element of type V (neither real nor complex)
 	 * using plain Kahan summation
 	 */
-	inline void operator+= (const V& increment) const
+	inline void operator+= (const V& increment)
 	requires (!is_real<V> && !is_complex<V>)
 	{   // plain Kahan
 		V naive_sum = Sum + increment;
