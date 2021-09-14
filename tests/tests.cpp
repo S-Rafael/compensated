@@ -133,19 +133,40 @@ TEST_F(knlite_test, equality_comparison)
 	auto kx1 = kn::value{x}; // template parameter inference
 	auto kx2 = kn::value<double>{x}; // no inference
 	auto other = kn::value<double>{huge_dbl};
+	// Comparisons between two object of kn::value class
 	EXPECT_TRUE(kx1 == kx2);
-	EXPECT_FALSE(kx1 != kx2);
 	EXPECT_FALSE(kx1 == other);
 	EXPECT_FALSE(kx2 == other);
-	EXPECT_TRUE(kx1 != other);
-	EXPECT_TRUE(kx2 != other);
+	EXPECT_FALSE(huge_dbl == kx1);
+	// Comparisons with raw value on the right
 	EXPECT_TRUE(kx1 == x);
-	EXPECT_FALSE(kx1 != x);
 	EXPECT_TRUE(kx2 == x);
-	EXPECT_FALSE(kx2 != x);
+	// Comparisons with raw value on the left
 	EXPECT_TRUE(x == kx1);
 	EXPECT_TRUE(x == kx2);
+	EXPECT_FALSE(x == other);
+}
+
+/**
+ * @test Rewritten operator !=
+ */
+TEST_F(knlite_test, inequality_comparison)
+{
+	double x = 42.0;
+	auto kx1 = kn::value{x}; // template parameter inference
+	auto kx2 = kn::value<double>{x}; // no inference
+	auto other = kn::value<double>{huge_dbl};
+	// Comparisons between two object of kn::value class
+	EXPECT_FALSE(kx1 != kx2);
+	EXPECT_TRUE(kx1 != other);
+	EXPECT_TRUE(kx2 != other);
 	EXPECT_FALSE(huge_dbl == kx1);
+	// Comparisons with raw value on the right
+	EXPECT_FALSE(kx1 != x);
+	EXPECT_FALSE(kx2 != x);
+	// Comparisons with raw value on the left
+	EXPECT_FALSE(x != kx1);
+	EXPECT_TRUE(x != other);
 }
 
 /**

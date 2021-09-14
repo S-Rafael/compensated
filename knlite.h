@@ -128,8 +128,7 @@ concept is_complex = requires(T z)
  * @param
  * The template parameter is the underlying "raw" value.
  */
-template<typename V>
-requires kahanizable<V>
+template<kahanizable V>
 class value
 {
 private:
@@ -197,6 +196,8 @@ public:
 	}
 
 //=== Equality comparison operators ===
+// Note: the corresponding `!=` operators will be auto-generated
+// by the C++20 rewriting mechanism.
 
 	/**
 	 * @brief operator== tries to determine if two objects represent the
@@ -211,18 +212,6 @@ public:
 	}
 
 	/**
-	 * @brief operator!= tries to determine if two objects represent
-	 * mathematically different values
-	 * @param other - right-hand side of comparison
-	 * @return true on inequality, false on equality
-	 */
-	inline constexpr bool operator!= (const value<V>& other) const
-	requires std::equality_comparable<V>
-	{
-		return !(operator==(other));
-	}
-
-	/**
 	 * @brief operator== tries to compare the value represented by this
 	 * object with a raw value
 	 * @param value - raw value to compare with
@@ -232,18 +221,6 @@ public:
 	requires std::equality_comparable<V>
 	{
 		return (Compensation == value - Sum) || (Sum == value - Compensation);
-	}
-
-	/**
-	 * @brief operator!= tries to compare the value represented by this
-	 * object with a raw value
-	 * @param value - raw value to compare with
-	 * @return true on inequality, false on equality
-	 */
-	inline constexpr bool operator!= (const V& value) const
-	requires std::equality_comparable<V>
-	{
-		return !(operator==(value));
 	}
 
 //=== Unary minus ===
@@ -523,7 +500,7 @@ inline value<V> operator-(V raw, value<V> kn)
 {
 	return (-kn) + raw;
 }
-// ==== Left equality comparison operators: V == value<V>, V != value<V>
+// ==== Left equality comparison operator: V == value<V>
 /**
  * @brief Operator `==` with raw value on the left
  */
@@ -533,16 +510,7 @@ inline value<V> operator==(V raw, value<V> kn)
 {
 	return (kn == raw);
 }
-
-/**
- * @brief Operator `!=` with raw value on the left
- */
-template<typename V>
-requires kahanizable<V>
-inline value<V> operator!=(V raw, value<V> kn)
-{
-	return (kn != raw);
-}
+// Note: operator!= will be auto-generated through C++20 "rewriting"
 
 } // namespace kn
 
