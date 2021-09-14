@@ -38,14 +38,14 @@
 namespace kn
 {
 /*
- * First, we formulate the concept of "admissible" raw value types
+ * First, we formulate the concept of `kahanizable` raw value types
  * and introduce two special predicates:
  *
  * • being "real"    (a real number in the mathematical sense),
  * • being "complex" (a complex number in the mathematical sense).
  *
- * In order for a raw value type to be admissible for Kahan summation,
- * it must satisfy the following properties:
+ * In order for a raw value type to be `kahanizable`, i.e., admissible
+ * for Kahan summation, it must satisfy the following properties:
  *
  * 1) It must be assignable from the integer literal `0`.
  * 2) There must be an operator + and operator - defined for the raw type,
@@ -72,7 +72,10 @@ concept kahanizable = requires(T a, T b)
  * @brief Whether a unary operator `-` exists for the type
  */
 template<typename T>
-concept has_unary_minus = requires(T a, T result) {result = -a;};
+concept has_unary_minus = requires(T a)
+{
+    {-a} -> std::convertible_to<T>;
+};
 
 /**
  * @brief Whether the type has an overload of std::abs
@@ -102,7 +105,7 @@ concept is_real = std::three_way_comparable<T>
 /*
  * Formulate a predicate saying that a given type behaves
  * "like a complex number", i.e., that it has public member
- * functions real(), imag() returning kahanizable real types
+ * functions real(), imag() returning `kahanizable` real types
  * and has a 2-argument constructor which accepts these types.
  */
 template<typename T>
@@ -132,14 +135,17 @@ template<kahanizable V>
 class value
 {
 private:
-    // There are only two private members that actually live in the object:
     V Sum = 0;           // the sum
     V Compensation = 0;  // the running compensation
 
 public:
     // Constructors from nothing and from V:
     constexpr value() = default;
-    explicit constexpr value(const V& initial_value) : Sum{initial_value} {Compensation = 0;}
+    explicit constexpr value(const V& initial_value)
+        : Sum{initial_value}
+    {
+        Compensation = 0;
+    }
     /*
      * Copy/move constructors and assignment operators: all defaulted.
      * This class is default-constructible, trivially copiable and movable
@@ -484,8 +490,7 @@ public:
 /**
  * @brief Operator `+` for adding a raw value on the left
  */
-template<typename V>
-requires kahanizable<V>
+template<kahanizable V>
 inline value<V> operator+(V raw, value<V> kn)
 {
     return kn + raw;
@@ -494,8 +499,7 @@ inline value<V> operator+(V raw, value<V> kn)
 /**
  * @brief Operator `-` for subtracting from a raw value
  */
-template<typename V>
-requires kahanizable<V>
+template<kahanizable V>
 inline value<V> operator-(V raw, value<V> kn)
 {
     return (-kn) + raw;
@@ -504,8 +508,7 @@ inline value<V> operator-(V raw, value<V> kn)
 /**
  * @brief Operator `==` with raw value on the left
  */
-template<typename V>
-requires kahanizable<V>
+template<kahanizable V>
 inline value<V> operator==(V raw, value<V> kn)
 {
     return (kn == raw);
