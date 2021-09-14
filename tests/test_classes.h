@@ -7,7 +7,7 @@
  *
 ==========================================================
 
-	Definitions of raw value classes used in tests
+    Definitions of raw value classes used in tests
 
 */
 #ifndef _TEST_CLASSES_H
@@ -19,19 +19,19 @@
  */
 class real_with_custom_abs
 {
-	double x;
+    double x;
 public:
-	real_with_custom_abs(double v) : x{v} {};
-	inline double abs() const {return std::abs(x);};
-	inline real_with_custom_abs operator+ (const real_with_custom_abs& other) const
-	{
-		return real_with_custom_abs(x + other.x);
-	}
-	inline real_with_custom_abs operator- (const real_with_custom_abs& other) const
-	{
-		return real_with_custom_abs(x - other.x);
-	}
-	inline bool is_zero() const {return x == 0.0;}
+    real_with_custom_abs(double v) : x{v} {};
+    inline double abs() const {return std::abs(x);};
+    inline real_with_custom_abs operator+ (const real_with_custom_abs& other) const
+    {
+        return real_with_custom_abs(x + other.x);
+    }
+    inline real_with_custom_abs operator- (const real_with_custom_abs& other) const
+    {
+        return real_with_custom_abs(x - other.x);
+    }
+    inline bool is_zero() const {return x == 0.0;}
 };
 
 /**
@@ -40,20 +40,20 @@ public:
  */
 class custom_complex
 {
-	float x, y;
+    float x, y;
 public:
-	custom_complex(float real, float imag) : x{real}, y{imag} {};
-	custom_complex(int n) : y{0} { x=static_cast<float>(n); };
-	inline float real() const {return x;}
-	inline float imag() const {return y;}
-	inline custom_complex operator+ (const custom_complex& other) const
-	{
-		return custom_complex(x + other.x, y + other.y);
-	}
-	inline custom_complex operator- (const custom_complex& other) const
-	{
-		return custom_complex(x - other.x, y - other.y);
-	}
+    custom_complex(float real, float imag) : x{real}, y{imag} {};
+    custom_complex(int n) : y{0} { x=static_cast<float>(n); };
+    inline float real() const {return x;}
+    inline float imag() const {return y;}
+    inline custom_complex operator+ (const custom_complex& other) const
+    {
+        return custom_complex(x + other.x, y + other.y);
+    }
+    inline custom_complex operator- (const custom_complex& other) const
+    {
+        return custom_complex(x - other.x, y - other.y);
+    }
 };
 
 /**
@@ -62,25 +62,25 @@ public:
  */
 class custom_gadget
 {
-	float x, y, z;
+    float x, y, z;
 public:
-	custom_gadget(float nx, float ny, float nz) : x{nx}, y{ny}, z{nz} {};
-	custom_gadget(int n) : x{static_cast<float>(n)},
-						   y{static_cast<float>(n)},
-						   z{static_cast<float>(n)} {};
-	inline custom_gadget operator+ (const custom_gadget& other) const
-	{
-		return custom_gadget(x + other.x, y + other.y, z + other.z);
-	}
-	inline custom_gadget operator- (const custom_gadget& other) const
-	{
-		return custom_gadget(x - other.x, y - other.y, z - other.z);
-	}
-	bool operator== (const custom_gadget& other) const
-	{
-		return (x == other.x) && (y == other.y) && (z == other.z);
-	}
+    custom_gadget(float nx, float ny, float nz) : x{nx}, y{ny}, z{nz} {};
+    custom_gadget(int n) : x{static_cast<float>(n)},
+                           y{static_cast<float>(n)},
+                           z{static_cast<float>(n)} {};
+    inline custom_gadget operator+ (const custom_gadget& other) const
+    {
+        return custom_gadget(x + other.x, y + other.y, z + other.z);
+    }
+    inline custom_gadget operator- (const custom_gadget& other) const
+    {
+        return custom_gadget(x - other.x, y - other.y, z - other.z);
+    }
+    bool operator== (const custom_gadget& other) const
+    {
+        return (x == other.x) && (y == other.y) && (z == other.z);
+    }
 };
 
 #endif // _TEST_CLASSES_H
-// vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fenc=utf-8 :
+// vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=4:softtabstop=4:fenc=utf-8 :

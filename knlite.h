@@ -16,9 +16,9 @@
 #ifndef __cplusplus
 #error C++ is required to compile knlite
 #else
-	#if __cplusplus < 202002L
-	#error Compiling knlite requires C++20 or newer
-	#endif
+    #if __cplusplus < 202002L
+    #error Compiling knlite requires C++20 or newer
+    #endif
 #endif
 
 // Try to set precise float behavior for MSVC:
@@ -63,9 +63,9 @@ namespace kn
 template<typename T>
 concept kahanizable = requires(T a, T b)
 {
-	a = 0; // Assignable from integer literal `zero`
-	{a + b} -> std::convertible_to<T>; // has a binary plus
-	{a - b} -> std::convertible_to<T>; // has a binary minus
+    a = 0; // Assignable from integer literal `zero`
+    {a + b} -> std::convertible_to<T>; // has a binary plus
+    {a - b} -> std::convertible_to<T>; // has a binary minus
 };
 
 /**
@@ -80,7 +80,7 @@ concept has_unary_minus = requires(T a, T result) {result = -a;};
 template<typename T>
 concept has_std_abs = requires(T a)
 {
-	{std::abs(a)} -> std::three_way_comparable;
+    {std::abs(a)} -> std::three_way_comparable;
 };
 
 /**
@@ -89,7 +89,7 @@ concept has_std_abs = requires(T a)
 template<typename T>
 concept has_custom_abs = requires(T a)
 {
-	{a.abs()} -> std::three_way_comparable;
+    {a.abs()} -> std::three_way_comparable;
 };
 
 /**
@@ -97,7 +97,7 @@ concept has_custom_abs = requires(T a)
  */
 template<typename T>
 concept is_real = std::three_way_comparable<T>
-				  && (has_std_abs<T> || has_custom_abs<T>);
+                  && (has_std_abs<T> || has_custom_abs<T>);
 
 /*
  * Formulate a predicate saying that a given type behaves
@@ -107,8 +107,8 @@ concept is_real = std::three_way_comparable<T>
  */
 template<typename T>
 concept std_real = kahanizable<T>
-				   && std::three_way_comparable<T>
-				   && has_std_abs<T>;
+                   && std::three_way_comparable<T>
+                   && has_std_abs<T>;
 
 /**
  * @brief Whether the type represents a complex number
@@ -116,9 +116,9 @@ concept std_real = kahanizable<T>
 template<typename T>
 concept is_complex = requires(T z)
 {
-	{z.real()} -> std_real; // Has a real part
-	{z.imag()} -> std_real;	// Has an imaginary part
-	z = T(z.real(), z.imag()); // Can be reconstructed from those
+    {z.real()} -> std_real; // Has a real part
+    {z.imag()} -> std_real;    // Has an imaginary part
+    z = T(z.real(), z.imag()); // Can be reconstructed from those
 };
 //=============================================================================================
 /**
@@ -132,352 +132,352 @@ template<kahanizable V>
 class value
 {
 private:
-	// There are only two private members that actually live in the object:
-	V Sum = 0;           // the sum
-	V Compensation = 0;  // the running compensation
+    // There are only two private members that actually live in the object:
+    V Sum = 0;           // the sum
+    V Compensation = 0;  // the running compensation
 
 public:
-	// Constructors from nothing and from V:
-	constexpr value() = default;
-	explicit constexpr value(const V& initial_value) : Sum{initial_value} {Compensation = 0;}
-	/*
-	 * Copy/move constructors and assignment operators: all defaulted.
-	 * This class is default-constructible, trivially copiable and movable
-	 */
-	~value() = default;
+    // Constructors from nothing and from V:
+    constexpr value() = default;
+    explicit constexpr value(const V& initial_value) : Sum{initial_value} {Compensation = 0;}
+    /*
+     * Copy/move constructors and assignment operators: all defaulted.
+     * This class is default-constructible, trivially copiable and movable
+     */
+    ~value() = default;
 
 private:
-	// Constructor which manually sets the members. For internal use only.
-	value(V S, V C) : Sum{S}, Compensation{C} {};
+    // Constructor which manually sets the members. For internal use only.
+    value(V S, V C) : Sum{S}, Compensation{C} {};
 
 public:
 //=== Conversion operators ===
 
-	/**
-	 * @brief Conversion operator to the raw value type
-	 */
-	inline constexpr operator V() const {return Sum + Compensation;}
+    /**
+     * @brief Conversion operator to the raw value type
+     */
+    inline constexpr operator V() const {return Sum + Compensation;}
 
-	/**
-	 * @brief Assignment operator from raw value type
-	 */
-	inline void operator= (V value)
-	{
-		Sum = value;
-		Compensation = 0;
-	}
+    /**
+     * @brief Assignment operator from raw value type
+     */
+    inline void operator= (V value)
+    {
+        Sum = value;
+        Compensation = 0;
+    }
 
-	/**
-	 * @brief Provides an estimate of the error resulting from conversion
-	 * to the raw value type
-	 */
-	inline V error(void) const
-	{
-		V converted = V(*this);
-		return (Sum - converted) + Compensation;
-	}
+    /**
+     * @brief Provides an estimate of the error resulting from conversion
+     * to the raw value type
+     */
+    inline V error(void) const
+    {
+        V converted = V(*this);
+        return (Sum - converted) + Compensation;
+    }
 
-	/**
-	 * @brief Extracts the real part of a complex value
-	 */
-	inline constexpr auto real(void) const
-	requires is_complex<V>
-	{
-		return Sum.real() + Compensation.real();
-	}
+    /**
+     * @brief Extracts the real part of a complex value
+     */
+    inline constexpr auto real(void) const
+    requires is_complex<V>
+    {
+        return Sum.real() + Compensation.real();
+    }
 
-	/**
-	 * @brief Extracts the imaginary part of a complex value
-	 */
-	inline constexpr auto imag(void) const
-	requires is_complex<V>
-	{
-		return Sum.imag() + Compensation.imag();
-	}
+    /**
+     * @brief Extracts the imaginary part of a complex value
+     */
+    inline constexpr auto imag(void) const
+    requires is_complex<V>
+    {
+        return Sum.imag() + Compensation.imag();
+    }
 
 //=== Equality comparison operators ===
 // Note: the corresponding `!=` operators will be auto-generated
 // by the C++20 rewriting mechanism.
 
-	/**
-	 * @brief operator== tries to determine if two objects represent the
-	 * same value, even if represented differently
-	 * @param other - right-hand side of comparison
-	 * @return true on equality, false on inequality
-	 */
-	inline constexpr bool operator== (const value<V>& other) const
-	requires std::equality_comparable<V>
-	{
-		return (Sum - other.Sum == other.Compensation - Compensation);
-	}
+    /**
+     * @brief operator== tries to determine if two objects represent the
+     * same value, even if represented differently
+     * @param other - right-hand side of comparison
+     * @return true on equality, false on inequality
+     */
+    inline constexpr bool operator== (const value<V>& other) const
+    requires std::equality_comparable<V>
+    {
+        return (Sum - other.Sum == other.Compensation - Compensation);
+    }
 
-	/**
-	 * @brief operator== tries to compare the value represented by this
-	 * object with a raw value
-	 * @param value - raw value to compare with
-	 * @return true on equality, false on inequality
-	 */
-	inline constexpr bool operator== (const V& value) const
-	requires std::equality_comparable<V>
-	{
-		return (Compensation == value - Sum) || (Sum == value - Compensation);
-	}
+    /**
+     * @brief operator== tries to compare the value represented by this
+     * object with a raw value
+     * @param value - raw value to compare with
+     * @return true on equality, false on inequality
+     */
+    inline constexpr bool operator== (const V& value) const
+    requires std::equality_comparable<V>
+    {
+        return (Compensation == value - Sum) || (Sum == value - Compensation);
+    }
 
 //=== Unary minus ===
-	/**
-	 * @brief Unary minus - for raw value types possessing a unary minus
-	 */
-	inline constexpr value<V> operator- (void) const
-	requires has_unary_minus<V>
-	{
-		return value<V>(-Sum, -Compensation);
-	}
+    /**
+     * @brief Unary minus - for raw value types possessing a unary minus
+     */
+    inline constexpr value<V> operator- (void) const
+    requires has_unary_minus<V>
+    {
+        return value<V>(-Sum, -Compensation);
+    }
 
-	/**
-	 * @brief Unary minus - for raw value types without a unary minus
-	 */
-	inline constexpr value<V> operator- (void) const
-	requires (! has_unary_minus<V>)
-	{
-		V zero = 0;
-		// We use subtraction from zero since there is no unary minus for V
-		return value<V>(zero - Sum, zero - Compensation);
-	}
+    /**
+     * @brief Unary minus - for raw value types without a unary minus
+     */
+    inline constexpr value<V> operator- (void) const
+    requires (! has_unary_minus<V>)
+    {
+        V zero = 0;
+        // We use subtraction from zero since there is no unary minus for V
+        return value<V>(zero - Sum, zero - Compensation);
+    }
 
 // === Kahan-Neumaier summation operators (on the right) ===
 // --- Real case ---
-	/**
-	 * @brief Add an element of type V using the Kahan-Neumaier addition
-	 * (real case supported by std::abs)
-	 */
-	inline value<V> operator+ (const V& increment) const
-	requires is_real<V> && has_std_abs<V>
-	{
-		V naive_sum = Sum + increment;
-		if (std::abs(Sum) > std::abs(increment))
-		{
-			/* In this case, we have a large sum to which a small increment
-			 * is added. Therefore, the compensation is computed by cancelling
-			 * the large sum with the naive sum.
-			 */
-			return value<V>(naive_sum,
-							Compensation + ((Sum - naive_sum) + increment));
-		}
-		else
-		{
-			/* In this case, the roles swap: the increment is larger than
-			 * the old sum, so we use the increment for the cancellation.
-			 */
-			return value<V>(naive_sum,
-							Compensation + ((increment - naive_sum) + Sum));
-		}
-	}
+    /**
+     * @brief Add an element of type V using the Kahan-Neumaier addition
+     * (real case supported by std::abs)
+     */
+    inline value<V> operator+ (const V& increment) const
+    requires is_real<V> && has_std_abs<V>
+    {
+        V naive_sum = Sum + increment;
+        if (std::abs(Sum) > std::abs(increment))
+        {
+            /* In this case, we have a large sum to which a small increment
+             * is added. Therefore, the compensation is computed by cancelling
+             * the large sum with the naive sum.
+             */
+            return value<V>(naive_sum,
+                            Compensation + ((Sum - naive_sum) + increment));
+        }
+        else
+        {
+            /* In this case, the roles swap: the increment is larger than
+             * the old sum, so we use the increment for the cancellation.
+             */
+            return value<V>(naive_sum,
+                            Compensation + ((increment - naive_sum) + Sum));
+        }
+    }
 
-	/**
-	 * @brief Add an element of type V using the Kahan-Neumaier addition
-	 * (real case with user-supplied abs() member)
-	 */
-	inline value<V> operator+ (const V& increment) const
-	requires is_real<V> && has_custom_abs<V> && (!has_std_abs<V>)
-	{ // See comments for the version with std::abs for explanation
-		V naive_sum = Sum + increment;
-		if (Sum.abs() > increment.abs())
-			return value<V>(naive_sum,
-							Compensation + ((Sum - naive_sum) + increment));
-		else
-			return value<V>(naive_sum,
-							Compensation + ((increment - naive_sum) + Sum));
-	}
+    /**
+     * @brief Add an element of type V using the Kahan-Neumaier addition
+     * (real case with user-supplied abs() member)
+     */
+    inline value<V> operator+ (const V& increment) const
+    requires is_real<V> && has_custom_abs<V> && (!has_std_abs<V>)
+    { // See comments for the version with std::abs for explanation
+        V naive_sum = Sum + increment;
+        if (Sum.abs() > increment.abs())
+            return value<V>(naive_sum,
+                            Compensation + ((Sum - naive_sum) + increment));
+        else
+            return value<V>(naive_sum,
+                            Compensation + ((increment - naive_sum) + Sum));
+    }
 
-	/**
-	 * @brief Add in-place an element of type V using the Kahan-Neumaier addition
-	 * (real case supported by std::abs)
-	 */
-	inline void operator+= (const V& increment)
-	requires is_real<V> && has_std_abs<V>
-	{
-		V naive_sum = Sum + increment;
-		if (std::abs(Sum) > std::abs(increment)) // See comments in operator+
-			Compensation = Compensation + ((Sum - naive_sum) + increment);
-		else
-			Compensation = Compensation + ((increment - naive_sum) + Sum);
-		Sum = naive_sum;
-	}
+    /**
+     * @brief Add in-place an element of type V using the Kahan-Neumaier addition
+     * (real case supported by std::abs)
+     */
+    inline void operator+= (const V& increment)
+    requires is_real<V> && has_std_abs<V>
+    {
+        V naive_sum = Sum + increment;
+        if (std::abs(Sum) > std::abs(increment)) // See comments in operator+
+            Compensation = Compensation + ((Sum - naive_sum) + increment);
+        else
+            Compensation = Compensation + ((increment - naive_sum) + Sum);
+        Sum = naive_sum;
+    }
 
-	/**
-	 * @brief Add in-place an element of type V using the Kahan-Neumaier addition
-	 * (real case with user-supplied abs() member)
-	 */
-	inline void operator+= (const V& increment)
-	requires is_real<V> && has_custom_abs<V> && (!has_std_abs<V>)
-	{
-		V naive_sum = Sum + increment;
-		if (Sum.abs() > increment.abs()) // See comments in operator+
-			Compensation = Compensation + ((Sum - naive_sum) + increment);
-		else
-			Compensation = Compensation + ((increment - naive_sum) + Sum);
-		Sum = naive_sum;
-	}
+    /**
+     * @brief Add in-place an element of type V using the Kahan-Neumaier addition
+     * (real case with user-supplied abs() member)
+     */
+    inline void operator+= (const V& increment)
+    requires is_real<V> && has_custom_abs<V> && (!has_std_abs<V>)
+    {
+        V naive_sum = Sum + increment;
+        if (Sum.abs() > increment.abs()) // See comments in operator+
+            Compensation = Compensation + ((Sum - naive_sum) + increment);
+        else
+            Compensation = Compensation + ((increment - naive_sum) + Sum);
+        Sum = naive_sum;
+    }
 
 // --- Complex case
-	/**
-	 * @brief Add an element of type V using the Kahan-Neumaier addition
-	 * (complex case)
-	 */
-	inline value<V> operator+ (const V& increment) const
-	requires is_complex<V>
-	{
-		V naive_sum = Sum + increment;
-		auto inc_real = increment.real();
-		auto inc_imag = increment.imag();
+    /**
+     * @brief Add an element of type V using the Kahan-Neumaier addition
+     * (complex case)
+     */
+    inline value<V> operator+ (const V& increment) const
+    requires is_complex<V>
+    {
+        V naive_sum = Sum + increment;
+        auto inc_real = increment.real();
+        auto inc_imag = increment.imag();
 
-		// Real and imaginary parts of the update to Compensation:
-		decltype(inc_real) comp_update_real, comp_update_imag;
+        // Real and imaginary parts of the update to Compensation:
+        decltype(inc_real) comp_update_real, comp_update_imag;
 
-		// Compute the update to the real part of the compensation
-		if (std::abs(Sum.real()) > std::abs(inc_real))
-			comp_update_real = (Sum.real() - naive_sum.real()) + inc_real;
-		else
-			comp_update_real = (inc_real - naive_sum.real()) + Sum.real();
+        // Compute the update to the real part of the compensation
+        if (std::abs(Sum.real()) > std::abs(inc_real))
+            comp_update_real = (Sum.real() - naive_sum.real()) + inc_real;
+        else
+            comp_update_real = (inc_real - naive_sum.real()) + Sum.real();
 
-		// Compute the update to the imaginary part of the compensation
-		if (std::abs(Sum.imag()) > std::abs(inc_imag))
-			comp_update_imag = (Sum.imag() - naive_sum.imag()) + inc_imag;
-		else
-			comp_update_imag = (inc_imag - naive_sum.imag()) + Sum.imag();
+        // Compute the update to the imaginary part of the compensation
+        if (std::abs(Sum.imag()) > std::abs(inc_imag))
+            comp_update_imag = (Sum.imag() - naive_sum.imag()) + inc_imag;
+        else
+            comp_update_imag = (inc_imag - naive_sum.imag()) + Sum.imag();
 
-		return value<V>(naive_sum,
-						Compensation + V(comp_update_real, comp_update_imag));
-	}
+        return value<V>(naive_sum,
+                        Compensation + V(comp_update_real, comp_update_imag));
+    }
 
-	/**
-	 * @brief Add in-place an element of type V using the Kahan-Neumaier addition
-	 * (complex case)
-	 */
-	inline void operator+= (const V& increment)
-	requires is_complex<V>
-	{
-		V naive_sum = Sum + increment;
-		auto inc_real = increment.real();
-		auto inc_imag = increment.imag();
+    /**
+     * @brief Add in-place an element of type V using the Kahan-Neumaier addition
+     * (complex case)
+     */
+    inline void operator+= (const V& increment)
+    requires is_complex<V>
+    {
+        V naive_sum = Sum + increment;
+        auto inc_real = increment.real();
+        auto inc_imag = increment.imag();
 
-		// Real and imaginary parts of the update to Compensation:
-		decltype(inc_real) comp_update_real, comp_update_imag;
+        // Real and imaginary parts of the update to Compensation:
+        decltype(inc_real) comp_update_real, comp_update_imag;
 
-		// Compute the update to the real part of the compensation
-		if (std::abs(Sum.real()) > std::abs(inc_real))
-			comp_update_real = (Sum.real() - naive_sum.real()) + inc_real;
-		else
-			comp_update_real = (inc_real - naive_sum.real()) + Sum.real();
+        // Compute the update to the real part of the compensation
+        if (std::abs(Sum.real()) > std::abs(inc_real))
+            comp_update_real = (Sum.real() - naive_sum.real()) + inc_real;
+        else
+            comp_update_real = (inc_real - naive_sum.real()) + Sum.real();
 
-		// Compute the update to the imaginary part of the compensation
-		if (std::abs(Sum.imag()) > std::abs(inc_imag))
-			comp_update_imag = (Sum.imag() - naive_sum.imag()) + inc_imag;
-		else
-			comp_update_imag = (inc_imag - naive_sum.imag()) + Sum.imag();
+        // Compute the update to the imaginary part of the compensation
+        if (std::abs(Sum.imag()) > std::abs(inc_imag))
+            comp_update_imag = (Sum.imag() - naive_sum.imag()) + inc_imag;
+        else
+            comp_update_imag = (inc_imag - naive_sum.imag()) + Sum.imag();
 
-		// Update in-place:
-		Sum = naive_sum;
-		Compensation = Compensation + V(comp_update_real, comp_update_imag);
-	}
+        // Update in-place:
+        Sum = naive_sum;
+        Compensation = Compensation + V(comp_update_real, comp_update_imag);
+    }
 
 // --- The case of V neither real nor complex - plain Kahan algorithm
-	/**
-	 * @brief Add an element of type V (neither real nor complex)
-	 * using plain Kahan summation
-	 */
-	inline value<V> operator+ (const V& increment) const
-	requires (!is_real<V>) && (!is_complex<V>)
-	{   // plain Kahan
-		V naive_sum = Sum + increment;
-		return value<V>(naive_sum,
-						Compensation + ((Sum - naive_sum) + increment));
-	}
+    /**
+     * @brief Add an element of type V (neither real nor complex)
+     * using plain Kahan summation
+     */
+    inline value<V> operator+ (const V& increment) const
+    requires (!is_real<V>) && (!is_complex<V>)
+    {   // plain Kahan
+        V naive_sum = Sum + increment;
+        return value<V>(naive_sum,
+                        Compensation + ((Sum - naive_sum) + increment));
+    }
 
-	/**
-	 * @brief Add in-place an element of type V (neither real nor complex)
-	 * using plain Kahan summation
-	 */
-	inline void operator+= (const V& increment)
-	requires (!is_real<V> && !is_complex<V>)
-	{   // plain Kahan
-		V naive_sum = Sum + increment;
-		Compensation = Compensation + ((Sum - naive_sum) + increment);
-		Sum = naive_sum;
-	}
+    /**
+     * @brief Add in-place an element of type V (neither real nor complex)
+     * using plain Kahan summation
+     */
+    inline void operator+= (const V& increment)
+    requires (!is_real<V> && !is_complex<V>)
+    {   // plain Kahan
+        V naive_sum = Sum + increment;
+        Compensation = Compensation + ((Sum - naive_sum) + increment);
+        Sum = naive_sum;
+    }
 
 // === Operators that are common to all cases
-	/**
-	 * @brief Adds an element of the same type
-	 */
-	inline value<V> operator+ (const value<V>& other) const
-	{   // re-use previously defined operators:
-		return operator+(other.Sum) + other.Compensation;
-	}
+    /**
+     * @brief Adds an element of the same type
+     */
+    inline value<V> operator+ (const value<V>& other) const
+    {   // re-use previously defined operators:
+        return operator+(other.Sum) + other.Compensation;
+    }
 
-	/**
-	 * @brief Adds in-place an element of the same type
-	 */
-	inline void operator+= (const value<V>& other)
-	{   // re-use previosly defined operators:
-		operator+=(other.Sum);
-		operator+=(other.Compensation);
-	}
+    /**
+     * @brief Adds in-place an element of the same type
+     */
+    inline void operator+= (const value<V>& other)
+    {   // re-use previosly defined operators:
+        operator+=(other.Sum);
+        operator+=(other.Compensation);
+    }
 
 // --- Variants of operator `-`
-	/**
-	 * @brief Subtracts a raw value from the kn::value object
-	 */
-	inline value<V> operator- (const V& increment) const
-	requires has_unary_minus<V>
-	{
-		return operator+(-increment);
-	}
+    /**
+     * @brief Subtracts a raw value from the kn::value object
+     */
+    inline value<V> operator- (const V& increment) const
+    requires has_unary_minus<V>
+    {
+        return operator+(-increment);
+    }
 
-	/**
-	 * @brief Subtracts a raw value from the kn::value object
-	 */
-	inline value<V> operator- (const V& increment) const
-	requires (!has_unary_minus<V>)
-	{
-		V zero = 0;
-		return operator+(zero-increment);
-	}
+    /**
+     * @brief Subtracts a raw value from the kn::value object
+     */
+    inline value<V> operator- (const V& increment) const
+    requires (!has_unary_minus<V>)
+    {
+        V zero = 0;
+        return operator+(zero-increment);
+    }
 
-	/**
-	 * @brief Subtracts in-place a raw value from the kn::value object
-	 */
-	inline void operator-= (const V& increment)
-	requires has_unary_minus<V>
-	{
-		operator+=(-increment);
-	}
+    /**
+     * @brief Subtracts in-place a raw value from the kn::value object
+     */
+    inline void operator-= (const V& increment)
+    requires has_unary_minus<V>
+    {
+        operator+=(-increment);
+    }
 
-	/**
-	 * @brief Subtracts in-place a raw value from the kn::value object
-	 */
-	inline void operator-= (const V& increment)
-	requires (!has_unary_minus<V>)
-	{
-		V zero = 0;
-		operator+=(zero-increment);
-	}
+    /**
+     * @brief Subtracts in-place a raw value from the kn::value object
+     */
+    inline void operator-= (const V& increment)
+    requires (!has_unary_minus<V>)
+    {
+        V zero = 0;
+        operator+=(zero-increment);
+    }
 
-	/**
-	 * @brief Subtracts another kn::value object from the current one
-	 */
-	inline value<V> operator- (const value<V>& other) const
-	{
-		return operator+(-other);
-	}
+    /**
+     * @brief Subtracts another kn::value object from the current one
+     */
+    inline value<V> operator- (const value<V>& other) const
+    {
+        return operator+(-other);
+    }
 
-	/**
-	 * @brief Subtracts in-place another kn::value object from the current one
-	 */
-	inline void operator-= (const value<V>& other)
-	{
-		operator+=(-other);
-	}
+    /**
+     * @brief Subtracts in-place another kn::value object from the current one
+     */
+    inline void operator-= (const value<V>& other)
+    {
+        operator+=(-other);
+    }
 }; // class value
 
 // ==== Left operators: V + value<V>, V - value<V>
@@ -488,7 +488,7 @@ template<typename V>
 requires kahanizable<V>
 inline value<V> operator+(V raw, value<V> kn)
 {
-	return kn + raw;
+    return kn + raw;
 }
 
 /**
@@ -498,7 +498,7 @@ template<typename V>
 requires kahanizable<V>
 inline value<V> operator-(V raw, value<V> kn)
 {
-	return (-kn) + raw;
+    return (-kn) + raw;
 }
 // ==== Left equality comparison operator: V == value<V>
 /**
@@ -508,7 +508,7 @@ template<typename V>
 requires kahanizable<V>
 inline value<V> operator==(V raw, value<V> kn)
 {
-	return (kn == raw);
+    return (kn == raw);
 }
 // Note: operator!= will be auto-generated through C++20 "rewriting"
 
@@ -520,4 +520,4 @@ inline value<V> operator==(V raw, value<V> kn)
 
 #endif // __KNLITE_H__
 
-// vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fenc=utf-8 :
+// vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=4:softtabstop=4:fenc=utf-8 :
