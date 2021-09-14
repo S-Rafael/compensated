@@ -13,7 +13,7 @@
 
 #include <complex>
 #include "gtest/gtest.h"
-#include "../knlite.hpp"
+#include "../knlite.h"
 
 #include "test_classes.h"
 

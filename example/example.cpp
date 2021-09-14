@@ -12,7 +12,7 @@
 #include <iostream> // For console input/output
 #include <complex>  // For std::complex
 
-#include "knlite.hpp"
+#include "knlite.h"
 
 /**
  *  We declare a very simple custom class to demonstrate

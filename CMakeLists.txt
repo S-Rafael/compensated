@@ -24,9 +24,9 @@ add_custom_target(check
                   WORKING_DIRECTORY tests)
 
 # Add a dummy target for the header file, which does nothing
-add_library(knlite INTERFACE knlite.hpp)
-set_source_files_properties(knlite.hpp PROPERTIES HEADER_FILE_ONLY TRUE)
-set_target_properties(knlite PROPERTIES PUBLIC_HEADER knlite.hpp)
+add_library(knlite INTERFACE knlite.h)
+set_source_files_properties(knlite.h PROPERTIES HEADER_FILE_ONLY TRUE)
+set_target_properties(knlite PROPERTIES PUBLIC_HEADER knlite.h)
 
 # Add the install target
 install(TARGETS knlite  

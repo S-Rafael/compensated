@@ -9,8 +9,8 @@
  * See example/example.cpp for examples of usage.
 =============================================================================================*/
 
-#ifndef _KNLITE_HPP
-#define _KNLITE_HPP
+#ifndef __KNLITE_H__
+#define __KNLITE_H__
 
 // Check if we have C++20 or later:
 #ifndef __cplusplus
@@ -550,6 +550,6 @@ inline value<V> operator!=(V raw, value<V> kn)
 #pragma float_control(pop)
 #endif
 
-#endif // _KNLITE_HPP
+#endif // __KNLITE_H__
 
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fenc=utf-8 :
