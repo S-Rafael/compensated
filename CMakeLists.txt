@@ -28,8 +28,10 @@ add_library(knlite INTERFACE knlite.h)
 set_source_files_properties(knlite.h PROPERTIES HEADER_FILE_ONLY TRUE)
 set_target_properties(knlite PROPERTIES PUBLIC_HEADER knlite.h)
 
-# Add the install target
+# Add the install commands
 install(TARGETS knlite  
         PUBLIC_HEADER
 		DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/knlite")
+install(FILES LICENSE
+        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/knlite")
 
