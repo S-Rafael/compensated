@@ -5,13 +5,11 @@
  * This software is licensed under the terms of the 3-Clause BSD License.
  * Please refer to the accompanying LICENSE file for the license terms.
  *
-==========================================================
-
-    Definitions of raw value classes used in tests
-
-*/
+ */
 #ifndef _TEST_CLASSES_H
 #define _TEST_CLASSES_H
+
+#include <complex> // For std::abs()
 
 /**
  * @brief The real_with_custom_abs class provides an example

@@ -17,7 +17,10 @@ project(knlite_tests LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-add_executable(tests tests.cpp)
+add_executable(tests
+               tests.cpp
+               basic.cpp
+               custom-types.cpp)
 
 find_package(GTest REQUIRED)
 if (NOT GTest_FOUND)
