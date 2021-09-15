@@ -119,7 +119,7 @@ concept std_real = kahanizable<T>
 template<typename T>
 concept is_complex = requires(T z)
 {
-    {z.real()} -> std_real; // Has a real part
+    {z.real()} -> std_real;    // Has a real part
     {z.imag()} -> std_real;    // Has an imaginary part
     z = T(z.real(), z.imag()); // Can be reconstructed from those
 };
@@ -129,7 +129,7 @@ concept is_complex = requires(T z)
  * class `value` - template class representing a value
  * with compensated Kahan/Kahan-Neumaier addition.
  * @param
- * The template parameter is the underlying "raw" value.
+ * The template parameter is the underlying "raw" value type.
  */
 template<kahanizable V>
 class value
@@ -154,7 +154,7 @@ public:
 
 private:
     // Constructor which manually sets the members. For internal use only.
-    value(V S, V C) : Sum{S}, Compensation{C} {};
+    explicit constexpr value(V S, V C) : Sum{S}, Compensation{C} {};
 
 public:
 //=== Conversion operators ===
@@ -207,7 +207,7 @@ public:
 
     /**
      * @brief operator== tries to determine if two objects represent the
-     * same value, even if represented differently
+     * same mathematical value, even if represented differently
      * @param other - right-hand side of comparison
      * @return true on equality, false on inequality
      */
