@@ -1,5 +1,5 @@
 # encoding: UTF-8
-# main cmake file for knlite.
+# main cmake file for the Compensated project.
 #------------------------------------------------------------------------------
 #
 # © Copyright 2021 Rafał M. Siejakowski <rs@rs-math.net>
@@ -10,7 +10,7 @@
 #------------------------------------------------------------------------------
 
 cmake_minimum_required(VERSION 3.5)
-project(knlite LANGUAGES CXX)
+project(compensated LANGUAGES CXX)
 include(GNUInstallDirs)
 
 # Add subdirectories:
@@ -24,14 +24,14 @@ add_custom_target(check
                   WORKING_DIRECTORY tests)
 
 # Add a dummy target for the header file, which does nothing
-add_library(knlite INTERFACE knlite.h)
-set_source_files_properties(knlite.h PROPERTIES HEADER_FILE_ONLY TRUE)
-set_target_properties(knlite PROPERTIES PUBLIC_HEADER knlite.h)
+add_library(compensated INTERFACE compensated.h)
+set_source_files_properties(compensated.h PROPERTIES HEADER_FILE_ONLY TRUE)
+set_target_properties(compensated PROPERTIES PUBLIC_HEADER compensated.h)
 
 # Add the install commands
-install(TARGETS knlite  
+install(TARGETS compensated  
         PUBLIC_HEADER
-		DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/knlite")
+		DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/compensated")
 install(FILES LICENSE
-        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/knlite")
+        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/compensated")
 

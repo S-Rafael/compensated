@@ -9,11 +9,11 @@
 
 #include "tests.h"
 #include "lossy_values.h"
-#include "../knlite.h"
+#include "../compensated.h"
 #include "custom-types.h"
 
 /**
- * @file Tests of knlite with user-defined raw value types
+ * @file Tests of Compensated with user-defined raw value types
  */
 //============================================================================================
 
@@ -21,12 +21,12 @@
  * @test Test the Kahan-Neumaier summation with a custom value
  * type representing a real number, with a user-supplied abs() member
  */
-TEST(knlite_test, custom_real_type)
+TEST(compensated_test, custom_real_type)
 {
     real_with_custom_abs x = 0;
     real_with_custom_abs h = huge_dbl;
     real_with_custom_abs t = tiny_dbl;
-    kn::value<real_with_custom_abs> kx {x};
+    compensated::value<real_with_custom_abs> kx {x};
 
     // Test right operations
     kx = kx + h;
@@ -49,11 +49,11 @@ TEST(knlite_test, custom_real_type)
 /**
  * @test Test the Kahan-Neumaier summation with a custom complex-like type
  */
-TEST(knlite_test, custom_complex_type)
+TEST(compensated_test, custom_complex_type)
 {
     custom_complex z(huge_fl, tiny_fl);
     custom_complex w(tiny_fl, huge_fl);
-    kn::value test{z};
+    compensated::value test{z};
     test = w + test;
     test = test - z;
     test -= w;
@@ -64,17 +64,17 @@ TEST(knlite_test, custom_complex_type)
 /**
  * @test Test the pure Kahan summation with a custom general type
  */
-TEST(knlite_test, custom_general_type)
+TEST(compensated_test, custom_general_type)
 {
     // Make huge that we lose precision adding tiny_fl to huge_fl
     EXPECT_FLOAT_EQ(huge_fl + tiny_fl, huge_fl);
 
-    // Check that we do NOT lose precision with kn::value
+    // Check that we do NOT lose precision with compensated::value
     custom_gadget all_huge(huge_fl, huge_fl, huge_fl);
     custom_gadget all_tiny(tiny_fl, tiny_fl, tiny_fl);
 
-    kn::value test{all_huge};
-    kn::value<custom_gadget> larger = test + all_tiny;
+    compensated::value test{all_huge};
+    compensated::value<custom_gadget> larger = test + all_tiny;
     EXPECT_FALSE(test == larger);
 }
 

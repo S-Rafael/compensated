@@ -8,7 +8,7 @@
  */
 
 /**
- * @file This file declares the class knlite_test which inherits
+ * @file This file declares the class compensated_test which inherits
  * from testing::Test class of the GoogleTest suite.
  */
 
@@ -18,21 +18,21 @@
 #include "gtest/gtest.h"
 
 /**
- * @class The knlite_test class inherits from Google testing
+ * @class The compensated_test class inherits from Google testing
  * ::testing::Test class
  */
-class knlite_test : public ::testing::Test
+class compensated_test : public ::testing::Test
 {
 public:
     /**
-     * @brief knlite_test class constructor
+     * @brief compensated_test class constructor
      */
-    knlite_test() {::testing::Test::SetUpTestCase();}
+    compensated_test() {::testing::Test::SetUpTestCase();}
 
     /**
-     * @brief Destructor of class knlite_test
+     * @brief Destructor of class compensated_test
      */
-    ~knlite_test() override {::testing::Test::TearDownTestCase();}
+    ~compensated_test() override {::testing::Test::TearDownTestCase();}
 };
 
 

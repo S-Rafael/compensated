@@ -5,18 +5,22 @@
  * This software is licensed under the terms of the 3-Clause BSD License.
  * Please refer to the accompanying LICENSE file for the license terms.
  *
- *
- * This is an example/demo program illustrating the usage of the knlite library.
-=============================================================================================*/
+ */
+
+/** 
+ * @file
+ * This is an example/demo program illustrating the basic usage 
+ * of the Compensated library.
+ */
 
 #include <iostream> // For console input/output
 #include <complex>  // For std::complex
 
-#include "knlite.h"
+#include "compensated.h"
 
 /**
  *  We declare a very simple custom class to demonstrate
- *  the generic nature of the knlite library.
+ *  the generic nature of the Compensated library.
  */
 struct my_point
 {
@@ -53,7 +57,7 @@ int main(/* We don't need command line parameters */)
     // We define a huge number and a tiny number
     const double huge = 1.0e30;
     const double tiny = 1.0e-30;
-    cout << endl << "Examples of usage of knlite:" << endl << endl;
+    cout << endl << "Examples of usage of Compensated:" << endl << endl;
 
 // === Basic demonstration ===
     /* We try to perform naive calculations on doubles
@@ -64,38 +68,38 @@ int main(/* We don't need command line parameters */)
         cout << "Adding floating point numbers naively may lead to a loss of precision." << endl
              << "For example, " << expected_zero << " != 0\n" << endl;
 
-    // Now try the same with knlite
-    kn::value<double> kn_test{huge};
+    // Now try the same with Compensated
+    compensated::value<double> kn_test{huge};
     kn_test += tiny;
     kn_test -= huge;
     kn_test -= tiny;
     if (kn_test == 0.0)
-        cout << "Using the class `kn::value<double>`, the same calculation results in" << endl
+        cout << "Using the class `compensated::value<double>`, the same calculation results in" << endl
              << kn_test << " == 0" << endl << endl;
 
 // === Demonstration with complex numbers ===
     cdbl z {huge, tiny};
     cdbl w {tiny, huge};
-    kn::value<cdbl> kn_complex{z};
+    compensated::value<cdbl> kn_complex{z};
     kn_complex += w;
     kn_complex -= z;
     kn_complex -= w;
     if (kn_complex == 0.0)
-        cout << "Using the class `kn::value<std::complex<double>>`, we get:" << endl
+        cout << "Using the class `compensated::value<std::complex<double>>`, we get:" << endl
              << "[Real]: " << kn_complex.real() << " == 0" << endl
              << "[Imag]: " << kn_complex.imag() << " == 0" << endl << endl;
 
-// === Demonstration of overloaded operators on kn::value
-    kn::value<cdbl> kn_z(z);
-    kn::value<cdbl> kn_w(w);
+// === Demonstration of overloaded operators on compensated::value
+    compensated::value<cdbl> kn_z(z);
+    compensated::value<cdbl> kn_w(w);
     auto kn_result = kn_z + kn_w - kn_z - kn_w;
 
     if (kn_result == 0.0)
-        cout << "The same happens when we use the overloaded operators of `kn::value`:" << endl
+        cout << "The same happens when we use the overloaded operators of `compensated::value`:" << endl
              << "[Real]: " << kn_result.real() << " == 0" << endl
              << "[Imag]: " << kn_result.imag() << " == 0" << endl << endl;
 
-// === Demonstration of left operators and mixing raw values with kn::value
+// === Demonstration of left operators and mixing raw values with compensated::value
     kn_result = z + kn_w - kn_z - w;
     if (kn_result == 0.0)
         cout << "Left addition and mixing in of raw types results in:" << endl
@@ -106,8 +110,8 @@ int main(/* We don't need command line parameters */)
     my_point tiny_point, huge_point;
     tiny_point.x = tiny_point.y = tiny_point.z = tiny;
     huge_point.x = huge_point.y = huge_point.z = huge;
-    kn::value<my_point> kn_tiny(tiny_point);
-    kn::value<my_point> kn_huge(huge_point);
+    compensated::value<my_point> kn_tiny(tiny_point);
+    compensated::value<my_point> kn_huge(huge_point);
     auto pt_result = my_point(kn_huge + kn_tiny - kn_huge - kn_tiny);
     cout << "Example with a custom class `my_point`:" << endl
          << "pt_result.x == " << pt_result.x << " == 0" << endl

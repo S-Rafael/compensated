@@ -1,5 +1,5 @@
 # encoding: UTF-8
-# cmake file for the unit tests of knlite.
+# cmake file for the unit tests of Compensated.
 #------------------------------------------------------------------------------
 #
 # © Copyright 2021 Rafał M. Siejakowski <rs@rs-math.net>
@@ -12,7 +12,7 @@
 cmake_minimum_required(VERSION 3.5)
 cmake_policy(SET CMP0075 NEW)
 
-project(knlite_tests LANGUAGES CXX)
+project(compensated_tests LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)

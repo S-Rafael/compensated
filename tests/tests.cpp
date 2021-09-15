@@ -5,11 +5,11 @@
  * This software is licensed under the terms of the 3-Clause BSD License.
  * Please refer to the accompanying LICENSE file for the license terms.
  *
-==========================================================
+ */
 
-    Tests for knlite
-
-*/
+/**
+ * @file Tests for compensated.h
+ */
 
 #include "gtest/gtest.h"
 #include "tests.h"

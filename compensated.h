@@ -9,15 +9,15 @@
  * See example/example.cpp for examples of usage.
 =============================================================================================*/
 
-#ifndef __KNLITE_H__
-#define __KNLITE_H__
+#ifndef __COMPENSATED_H__
+#define __COMPENSATED_H__
 
 // Check if we have C++20 or later:
 #ifndef __cplusplus
-#error C++ is required to compile knlite
+#error C++ is required to compile the header compensated.h
 #else
     #if __cplusplus < 202002L
-    #error Compiling knlite requires C++20 or newer
+    #error Compiling compensated.h requires C++20 or newer
     #endif
 #endif
 
@@ -28,14 +28,14 @@
 
 // This library does NOT work with "fast math" or "unsafe math optimisations".
 #ifdef __FAST_MATH__
-#error Error: the knlite library does not work with fast math/unsafe optimizations.
+#error Error: compensated.h does not work with fast math/unsafe optimizations.
 #endif
 
 // We include only C++20 standard library headers:
 #include <concepts>
 #include <complex>
 
-namespace kn
+namespace compensated
 {
 /*
  * First, we formulate the concept of `kahanizable` raw value types
@@ -432,7 +432,7 @@ public:
 
 // --- Variants of operator `-`
     /**
-     * @brief Subtracts a raw value from the kn::value object
+     * @brief Subtracts a raw value from the value object
      */
     inline value<V> operator- (const V& increment) const
     requires has_unary_minus<V>
@@ -441,7 +441,7 @@ public:
     }
 
     /**
-     * @brief Subtracts a raw value from the kn::value object
+     * @brief Subtracts a raw value from the value object
      */
     inline value<V> operator- (const V& increment) const
     requires (!has_unary_minus<V>)
@@ -451,7 +451,7 @@ public:
     }
 
     /**
-     * @brief Subtracts in-place a raw value from the kn::value object
+     * @brief Subtracts in-place a raw value from the value object
      */
     inline void operator-= (const V& increment)
     requires has_unary_minus<V>
@@ -460,7 +460,7 @@ public:
     }
 
     /**
-     * @brief Subtracts in-place a raw value from the kn::value object
+     * @brief Subtracts in-place a raw value from the value object
      */
     inline void operator-= (const V& increment)
     requires (!has_unary_minus<V>)
@@ -470,7 +470,7 @@ public:
     }
 
     /**
-     * @brief Subtracts another kn::value object from the current one
+     * @brief Subtracts another value object from the current one
      */
     inline value<V> operator- (const value<V>& other) const
     {
@@ -478,7 +478,7 @@ public:
     }
 
     /**
-     * @brief Subtracts in-place another kn::value object from the current one
+     * @brief Subtracts in-place another value object from the current one
      */
     inline void operator-= (const value<V>& other)
     {
@@ -521,6 +521,6 @@ inline value<V> operator==(V raw, value<V> kn)
 #pragma float_control(pop)
 #endif
 
-#endif // __KNLITE_H__
+#endif // __COMPENSATED_H__
 
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=4:softtabstop=4:fenc=utf-8 :
