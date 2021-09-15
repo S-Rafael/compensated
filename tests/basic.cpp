@@ -11,10 +11,15 @@
 #include "lossy_values.h"
 #include "../knlite.h"
 
+/**
+ * @file Basic functionality tests
+ */
 //============================================================================================
 
 /**
- * @test Check if the precision is lost with ordinary operations
+ * @test Check if the precision is lost with ordinary operations;
+ * this ensures that other tests check if knlite actually makes a
+ * difference.
  */
 TEST(knlite_test, lossy_values)
 {

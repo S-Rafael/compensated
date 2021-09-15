@@ -13,8 +13,13 @@
 #include "custom-types.h"
 
 /**
+ * @file Tests of knlite with user-defined raw value types
+ */
+//============================================================================================
+
+/**
  * @test Test the Kahan-Neumaier summation with a custom value
- * type representing a real number, with user-supplied abs() member
+ * type representing a real number, with a user-supplied abs() member
  */
 TEST(knlite_test, custom_real_type)
 {
