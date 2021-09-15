@@ -1,11 +1,3 @@
 project/
-CMakeCache.txt
-CMakeFiles/
-cmake_install.cmake
-example/example
-tests/tests
-Makefile
-build.ninja
-.ninja_deps
-.ninja_log
+build/
 .directory
