@@ -37,7 +37,6 @@ else()
 	add_compile_options(-Wall -O3)
 endif()
 
-
-
+add_test(tests tests)
 
 
