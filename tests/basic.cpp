@@ -7,6 +7,7 @@
  *
  */
 
+#include <vector>
 #include "tests.h"
 #include "lossy_values.h"
 #include "../compensated.h"
@@ -221,6 +222,22 @@ TEST(compensated_test, kahan_neumaier_complex)
     sum = b;
     EXPECT_DOUBLE_EQ(sum.real(), 0.0);
     EXPECT_DOUBLE_EQ(sum.imag(), 0.0);
+}
+
+/**
+ * @test Test the compensated::value::accumulate function
+ */
+TEST(compensated_test, accumulate)
+{
+    std::vector<double> v;
+    v.push_back(1.0);
+    v.push_back(2.0);
+    v.push_back(3.0);
+    v.push_back(4.0); // sum is 10.0
+    compensated::value<double> test{0.0};
+    test.accumulate(v.begin(), v.end());
+    double result = test;
+    EXPECT_DOUBLE_EQ(result, 10.0);
 }
 
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=4:softtabstop=4:fenc=utf-8 :
