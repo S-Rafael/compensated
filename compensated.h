@@ -35,6 +35,7 @@
 #include <concepts>
 #include <complex>
 
+
 namespace compensated
 {
 /*
@@ -122,6 +123,18 @@ concept is_complex = requires(T z)
     {z.real()} -> std_real;    // Has a real part
     {z.imag()} -> std_real;    // Has an imaginary part
     z = T(z.real(), z.imag()); // Can be reconstructed from those
+};
+
+/**
+ * @brief The concept of an iterator to a container with
+ * elements of raw value type in it.
+ */
+template<typename It, typename V>
+concept is_iterator_to = requires (It i, It j)
+{
+    {*i}     -> std::convertible_to<V>;
+    {i != j} -> std::convertible_to<bool>;
+    {i = ++j}; // can be incremented
 };
 //=============================================================================================
 /**
@@ -430,6 +443,22 @@ public:
         operator+=(other.Compensation);
     }
 
+    /**
+     * @brief Adds an entire collection of raw value types to the
+     * present object. The collection is described by a pair of iterators
+     * of templated iterator type `It`. We require the iterator type `It`
+     * to behave like an iterator to V, i.e., to satisfy the concept
+     * is_iterator_to<It, V>
+     * @param first - the iterator to the beginning of the collection
+     * @param last  - the iterator to "one-past" last element of collection
+     */
+    template<typename It>
+    requires is_iterator_to<It, V>
+    inline void accumulate(It first, It last)
+    {
+        for (auto iter = first; iter != last; ++iter)
+            operator+=(*iter);
+    }
 // --- Variants of operator `-`
     /**
      * @brief Subtracts a raw value from the value object
