@@ -59,15 +59,22 @@ namespace compensated
  */
 
 /**
- * @brief Whether the basic Kahan summation algorithm can be implemented for the type
+ * @brief Whether the type has additive group operations
  */
 template<typename T>
-concept kahanizable = requires(T a, T b)
+concept group_element = requires(T a, T b)
 {
     a = 0; // Assignable from integer literal `zero`
     {a + b} -> std::convertible_to<T>; // has a binary plus
     {a - b} -> std::convertible_to<T>; // has a binary minus
 };
+
+/**
+ * @brief Whether the basic Kahan summation algorithm can be implemented for the type
+ */
+template<typename T>
+concept kahanizable = group_element<T>
+                   && std::is_nothrow_copy_assignable_v<T>;
 
 /**
  * @brief Whether a unary operator `-` exists for the type
