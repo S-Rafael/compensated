@@ -34,7 +34,7 @@
 // We include only C++20 standard library headers:
 #include <concepts>
 #include <complex>
-
+#include <ostream>
 
 namespace compensated
 {
@@ -139,9 +139,19 @@ concept is_complex = requires(T z)
 template<typename It, typename V>
 concept is_iterator_to = requires (It i, It j)
 {
-    {*i}     -> std::convertible_to<V>;
-    {i != j} -> std::convertible_to<bool>;
+    {*i}     -> std::same_as<V>;
+    {i != j} -> std::same_as<bool>;
     {i = ++j}; // can be incremented
+};
+
+/**
+ * @brief The concept of the existence of an overload of
+ * std::ostream::operator<< for the raw value type.
+ */
+template<typename V>
+concept has_output_operator = requires(std::ostream o, V v)
+{
+    {o << v} -> std::convertible_to<std::ostream&>;
 };
 //=============================================================================================
 /**
