@@ -20,6 +20,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 add_executable(tests
                tests.cpp
                basic.cpp
+               std.cpp
                custom-types.cpp)
 
 find_package(GTest REQUIRED)
