@@ -555,6 +555,7 @@ inline value<V> operator-(V raw, value<V> kn)
  * @brief Operator `==` with raw value on the left
  */
 template<kahanizable V>
+requires std::equality_comparable<V>
 inline value<V> operator==(V raw, value<V> kn)
 {
     return (kn == raw);
