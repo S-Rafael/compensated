@@ -139,7 +139,7 @@ concept is_complex = requires(T z)
 template<typename It, typename V>
 concept is_iterator_to = requires (It i, It j)
 {
-    {*i}     -> std::same_as<V>;
+    {*i}     -> std::convertible_to<V>;
     {i != j} -> std::same_as<bool>;
     {i = ++j}; // can be incremented
 };
